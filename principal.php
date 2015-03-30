@@ -18,7 +18,7 @@ if ($_SESSION["codigoAR"] == '') {
         require_once "model/postDAO.php";
         ?>
         <div class="main">
-            <div class="post-all">
+            <div class="post-all" id="posts">
                 <?php
                     require_once 'posts.php';
                 ?>

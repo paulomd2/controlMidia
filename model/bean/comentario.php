@@ -1,6 +1,8 @@
 <?php
 
 @include_once '../../include/funcoes.php';
+@include_once '../include/funcoes.php';
+@include_once 'include/funcoes.php';
 
 class Comentario {
 

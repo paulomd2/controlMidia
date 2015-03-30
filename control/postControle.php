@@ -36,7 +36,6 @@ switch ($opcao) {
         $idUsuario = $_SESSION['codigoAR'];
         $dataCadastro = date("Y-m-d H:i:s");
 
-        //var_dump($_FILES);
         if ($_FILES['foto']['name'] != '') {
             $foto = uploadImagem();
             if ($foto == false) {
@@ -45,8 +44,6 @@ switch ($opcao) {
         } else {
             $foto = '';
         }
-        
-        //echo $foto;
 
         $objPost->setData($data);
         $objPost->setTexto($texto);
@@ -59,112 +56,76 @@ switch ($opcao) {
 
         header("Location: ../principal.php");
         break;
-}
 
-if ($acao == 1) {
+    case 'altPost':
+        $data = $_POST['data'];
+        $texto = $_POST['texto'];
+        $idPost = $_POST['idPost'];
 
-    $sqlInsert = mysql_query("insert into posts set data='$data',texto='$texto',datahora=current_timestamp");
 
-    $sql2 = mysql_query("select max(idPost) as idPost from posts");
-    $reg = mysql_fetch_array($sql2);
-    $idPost = $reg['idPost'];
-
-    $uploaddir2 = 'upload/';
-    //$uploadfile2 = $uploaddir2 . $_FILES['foto']['name'];
-    $uploadfile2 = $uploaddir2 . "post" . $idPost . ".png";
-
-    if (move_uploaded_file($_FILES['foto']['tmp_name'], $uploadfile2)) {
-
-        $foto = $uploadfile2;
-
-        $sqlInsertarquivo = mysql_query("update posts set imagem='$foto' where idPost=$idPost");
-    }
-
-    header("Location: principal.php");
-}
-
-//Troca imagem
-if ($acao == 2) {
-    $uploaddir2 = 'upload/';
-
-    //$uploadfile2 = $uploaddir2 . $_FILES['foto']['name'];
-    $uploadfile2 = $uploaddir2 . "post" . $idPost . ".png";
-
-    if (move_uploaded_file($_FILES['foto']['tmp_name'], $uploadfile2)) {
-
-        $foto = $uploadfile2;
-
-        $sqlInsertarquivo = mysql_query("update posts set imagem='$foto' where idPost=$idPost");
-    }
-
-    header("Location: principal.php");
-}
-/*
-  //Adiciona Comentário
- * 
-  //Pronto
-  if ($acao == 3) {
-  $sql = mysql_query("insert into comentarios set idPost='$idPost',idUsuario='$idUsuario',comentario='$texto',datahora=current_timestamp");
-  header("Location: principal.php");
-  }
- */
-
-//Ecluir Post
-if ($acao == 4) {
-    $idPost = $_GET['idPost'];
-    $sqlImagem = mysql_query("select imagem from posts where idPost=$idPost");
-    $regImagem = mysql_fetch_array($sqlImagem);
-    $imagem = $regImagem['imagem'];
-    @unlink($imagem);
-
-    $sql = mysql_query("delete from posts where idPost=$idPost");
-    $sqlComentario = mysql_query("delete from comentarios where idPost=$idPost");
-
-    header("Location: principal.php");
-}
-
-//Editar Post
-if ($acao == 5) {
-    $sql = mysql_query("update posts set data='$data',texto='$texto' where idPost=$idPost");
-
-    $uploaddir2 = 'upload/';
-
-    //$uploadfile2 = $uploaddir2 . $_FILES['foto']['name'];
-    $uploadfile2 = $uploaddir2 . "post" . $idPost . ".png";
-
-    if (move_uploaded_file($_FILES['foto']['tmp_name'], $uploadfile2)) {
-
-        $foto = $uploadfile2;
-
-        $sqlInsertarquivo = mysql_query("update posts set imagem='$foto' where idPost=$idPost");
-    }
-
-    header("Location: principal.php");
-}
-
-function uploadImagem() {
-
-    $valido = true;
-    $tipoArquivo = pathinfo($_FILES['foto']['name']);
-    $tipoArquivo = '.' . $tipoArquivo['extension'];
-
-    $new_file_name = strtolower(md5(date('d/m/Y/H:i:s'))) . $tipoArquivo;
-    if ($_FILES['foto']['size'] > (1048576)) { //não pode ser maior que 1Mb
-        $valido = false;
-    } else {
-        @$imagemAntiga = '../upload/' . $_POST["imagemAntiga"];
-
-        if (!file_exists('../upload/')) {
-            mkdir('../upload/');
-        } elseif (file_exists($imagemAntiga)) {
-            @unlink($imagemAntiga);
+        //var_dump($_FILES);
+        if ($_FILES['foto']['name'] != '') {
+            $foto = uploadImagem();
+            if ($foto == false) {
+                $foto = '';
+            }
+        } else {
+            $foto = $_POST['imagemAntiga'];
         }
-        move_uploaded_file($_FILES['foto']['tmp_name'], '../upload/' . $new_file_name);
 
-        $valido = $new_file_name;
-    }
+        $objPost->setData($data);
+        $objPost->setTexto($texto);
+        $objPost->setImagem($foto);
+        $objPost->setIdPost($idPost);
 
-    return $valido;
+        $objPostDao->altPost($objPost);
+
+        header("Location: ../principal.php");
+        break;
+
+    case 'excluirPost':
+        $idPost = $_POST['idPost'];
+
+        $objPost->setIdPost($idPost);
+        $objComentario->setIdPost($idPost);
+
+        $post = $objPostDao->listaPost1($objPost);
+        $objComentarioDao->delComentario($objComentario);
+
+        unlink('../upload/' . $post['imagem']);
+        $objPostDao->delPost($objPost);
+
+        break;
+
+    case 'alteraImagem':
+        $idPost = $_POST['idPost'];
+        $foto = uploadImagem();
+
+        if ($foto === false) {
+            $foto = '';
+        }
+        
+        $objPost->setImagem($foto);
+        $objPost->setIdPost($idPost);
+        
+        $post = $objPostDao->listaPost1($objPost);
+        unlink('../upload/' . $post['imagem']);
+        
+        $objPostDao->altImagem($objPost);
+        
+        header("Location: ../principal.php");
+        break;
+        
+        case 'aprovaPost':
+            $idPost = $_POST['idPost'];
+            $data = date('Y-m-d H:i:s');
+            
+            $objPost->setIdPost($idPost);
+            $objPost->setIdUsuario($_SESSION['codigoAR']);
+            $objPost->setData($data);
+            
+            $objPostDao->aprovaPost($objPost);
+            break;
 }
 
 ?>

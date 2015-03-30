@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script>
+            function enviarForm() {
+                var nome = document.getElementById('nome');
+                var email = document.getElementById('email');
+                var assunto = document.getElementById('assunto');
+                var mensagem = document.getElementById('mensagem');
+                
+                document.getElementById('spanErro').innerHTML = "";
+                if(nome.value == ''){
+                    nome.focus();
+                    document.getElementById('spanErro').innerHTML = "Você deve preencher o nome";
+                }else if(email.value == ''){
+                    email.focus();
+                    document.getElementById('spanErro').innerHTML = "Você deve preencher o email";
+                }else if(assunto.value == ''){
+                    assunto.focus();
+                    document.getElementById('spanErro').innerHTML = "Você deve preencher o assunto";
+                }else if(mensagem.value == ''){
+                    mensagem.focus();
+                    document.getElementById('spanErro').innerHTML = "Você deve preencher a mensagem";
+                }else{
+                    document.getElementById('formContato').submit();
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <form action="email.php" method="post" id="formContato">
+            Nome: <input type="text" id="nome" name="nome" /><br />
+            email: <input type="email" id="email" name="email" /><br />
+            assunto: <input type="text" id="assunto" name="assunto" /><br />
+            mensagem: <textarea id="mensagem" name="mensagem"></textarea><br />
+            <a href="javascript:enviarForm()"> Enviar </a><br />
+            <input type="submit" value="lalal" />
+            <span id="spanErro"></span>
+        </form>
+    </body>
+</html>

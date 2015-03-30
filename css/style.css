@@ -348,13 +348,12 @@ p{
 .btn.aprovar{
     background: #2fa155!important;
     color: #fff!important;    
-    display: inline-block;
 }
 .btn.aprovado{
     background: none!important;  
     color: #2fa155!important;
-    padding: 8px 0px;
-    display: none;
+    /*padding: 8px 0px;*/
+    display: inline-block
 }
 
 @media screen and (max-width: 420px){

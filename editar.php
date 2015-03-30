@@ -1,19 +1,15 @@
 <?php
 @session_start();
-	$codigo=$_SESSION["codigoAR"];
-    if(isset($codigo))
-    {
+if ($_SESSION["codigoAR"] == '') {
+    header("Location: login.php?Erro=2");
+}
+require_once 'model/postDAO.php';
 
-		include("include/conexao.php");
-		
-		$idPost=$_GET['idPost'];
-		
-		$sql=mysql_query("select * from posts where idPost=$idPost");
-		$reg=mysql_fetch_array($sql);
-		$data=$reg['data'];
-		$imagem=$reg['imagem'];
-		$texto=$reg['texto'];
+$idPost = ($_GET['idPost']);
 
+$objPost->setIdPost($idPost);
+
+$post = $objPostDao->listaPost1($objPost);
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -28,29 +24,36 @@
             webshims.setOptions('forms-ext', {types: 'date'});
             webshims.polyfill('forms forms-ext');
         </script>
+        <script src="js/posts.js"></script>
     </head>
     <body>
         <?php include_once 'include/header.php' ?>
         <div class="main">
-            <form method="post" action="cadPost.php?acao=5&idPost=<?php echo $idPost; ?>" class="edi-post" enctype="multipart/form-data"  style="overflow: hidden;">
+            <form id="frmAltPost" method="post" action="control/postControle.php?opcao=altPost" class="edi-post" enctype="multipart/form-data"  style="overflow: hidden;">
 	        <input type="hidden" name="idPost" value="<?php echo $idPost; ?>" />
+                <input type="hidden" value="<?php echo $post['imagem'] ?>" name="imagemAntiga" />
+                <input type="hidden" value="altPost" name="opcao" />
                 <fieldset class="fl"> 
                     <h2>IMAGEM DO POST</h2>
                     <figure>
-                        <img src="<?php echo $imagem; ?>" alt=""/>
+                        <img src="upload/<?php echo $post['imagem']; ?>" alt=""/>
                     </figure>
-                    <input type="file" name="foto" />
+                    <input type="file" name="foto" id="foto" />
+                    
                 </fieldset>
                 <fieldset class="fr">
                     <fieldset>
                         <h2>DATA</h2>
-                        <input type="date" name="data" value="<?php echo $data; ?>" />
+                        <input type="date" name="data" id="data" value="<?php echo $post['data']; ?>" /><br />
+                        <span class="erro" id="spanData" />
                     </fieldset>
                     <fieldset>
                         <h2>CONTEÚDO DO POST</h2>
-                        <textarea name="texto"><?php echo $texto; ?></textarea>
+                        <textarea name="texto" id="texto"><?php echo $post['texto']; ?></textarea>
                     </fieldset>
-                    <input type="submit" value="Editar post"/> <input type="button" onclick="history.back(-1);" class="btn" value="VOLTAR">
+                    <input type="button" value="Editar post" id="btnAltPost" />
+                    <input type="button" onclick="history.back(-1);" class="btn" value="VOLTAR"><br />
+                    <span id="spanImagem" class="erro"></span>
                 </fieldset>
 
             </form>
@@ -59,10 +62,3 @@
 
     </body>
 </html>
-<?php
-	}
-	else
-	{
-		header("Location: login.php?Erro=2");
-	}
-?>

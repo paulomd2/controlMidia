@@ -23,7 +23,7 @@ class ComentarioDAO extends Banco{
         $this->fechaConexao();
     }
     
-    public function cadComentario($objComentario){
+    public function cadComentario(Comentario $objComentario){
         $conexao = $this->abreConexao();
         
         echo $sql = "INSERT INTO ".TBL_COMENTARIO." SET
@@ -31,6 +31,17 @@ class ComentarioDAO extends Banco{
                 idUsuario=".$objComentario->getIdUsuario().",
                 comentario='".$objComentario->getComentario()."',
                 datahora='".$objComentario->getData()."'";
+        
+        $conexao->query($sql);
+        
+    }
+    
+    
+    public function delComentario(Comentario $objComentario){
+        $conexao = $this->abreConexao();
+        
+        $sql = "DELETE FROM ".TBL_COMENTARIO."
+                    WHERE idPost = ".$objComentario->getIdCOmentario()." ";
         
         $conexao->query($sql);
         

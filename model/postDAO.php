@@ -20,10 +20,13 @@ class PostDao extends Banco {
         $sabado = date("Y-m-d", $sabado);
 
 
-        $sql = "SELECT *
-                    FROM " . TBL_POST . "
-                        WHERE data > '$domingo'
-                        ORDER BY data";
+        $sql = "SELECT p.*, DATE_FORMAT(p.aprovacao_data, '%d/%m/%Y às %H:%i') AS aprovacao,
+                u.nome AS usuario
+                FROM " . TBL_POST . " p
+                    LEFT JOIN ".TBL_USUARIO." u ON u.idUsuario = p.aprovacao_usuario
+                WHERE p.data > '$domingo'
+                ORDER BY p.data
+                ";
 
 
         $banco = $conexao->query($sql);
@@ -38,7 +41,21 @@ class PostDao extends Banco {
         $this->fechaConexao();
     }
     
-    
+    public function listaPost1($objPost){
+        $conexao = $this->abreConexao();
+        
+        $sql = "
+                SELECT * FROM ".TBL_POST." WHERE idPost = ".$objPost->getIdPost()."
+               ";
+        
+        $banco = $conexao->query($sql);
+        
+        $linha = $banco->fetch_assoc();
+        return $linha;
+        
+        $this->fechaConexao();
+    }
+
     public function cadPost($objPost){
         $conexao = $this->abreConexao();
         
@@ -53,6 +70,57 @@ class PostDao extends Banco {
         
         $conexao->query($sql) or die($conexao->error);
         
+        $this->fechaConexao();
+    }
+    
+    public function altPost($objPost){
+        $conexao = $this->abreConexao();
+        $sql = "UPDATE ".TBL_POST."
+                SET
+                data='".$objPost->getData()."',
+                texto='".$objPost->getTexto()."'
+                    WHERE idPost=".$objPost->getIdPost()."
+                ";
+        
+        $conexao->query($sql);
+        
+        $this->fechaConexao();
+    }
+    
+    public function delPost(Post $objPost){
+        $conexao = $this->abreConexao();
+        
+        $sql = "DELETE FROM ".TBL_POST." WHERE idPost = ".$objPost->getIdPost();
+        
+        $conexao->query($sql);
+        
+        $this->fechaConexao();
+    }
+    
+    
+    public function altImagem(Post $objPost){
+        $conexao = $this->abreConexao();
+        
+        $sql = "UPDATE ".TBL_POST." SET
+                imagem = '".$objPost->getImagem()."'
+                    WHERE idPost = ".$objPost->getIdPost()."
+               ";
+        
+        $conexao->query($sql);
+        
+        $this->fechaConexao();
+    }
+    
+    public function aprovaPost(Post $objPost){
+        $conexao = $this->abreConexao();
+      echo  $sql = "
+                UPDATE ".TBL_POST." SET
+                aprovacao_usuario = ".$objPost->getIdUsuario().",
+                aprovacao_data = '".$objPost->getData()."'
+                    WHERE idPost = ".$objPost->getIdPost()."
+               ";
+        
+        $conexao->query($sql);
         $this->fechaConexao();
     }
 
