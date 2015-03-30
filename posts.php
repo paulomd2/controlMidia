@@ -33,6 +33,8 @@ foreach ($posts as $post):
                 if ($_SESSION['nivel'] == 1) {
                     echo "<a href='editar.php?idPost=" . $post['idPost'] . "' class='btn'>Editar</a>";
                     echo "<a href='cadPost.php?idPost=" . $post['idPost'] . "&acao=4' class='btn'>Excluir</a>";
+                    echo "<a href='#' class='btn aprovar'>APROVAR POST</a>";
+                    echo "<span class='btn aprovado'>POST PROVADO <i class='icon icon-checkmark'></i></a>";
                 }
                 ?>
             </p>
