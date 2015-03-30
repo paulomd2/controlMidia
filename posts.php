@@ -10,7 +10,7 @@ foreach ($posts as $post):
     ?>
     <div class="ipost">
         <div class="imagem">
-            <figure><img src="<?php echo $post['imagem']; ?>" alt=""/></figure>
+            <figure><img src="upload/<?php echo $post['imagem']; ?>" alt=""/></figure>
             <!--<a href="#" class="btn">Alterar Imagem</a>-->
             <?php if ($_SESSION['nivel'] == 1): ?>
                 <form action="cadPost.php?acao=2" method="post" enctype="multipart/form-data">

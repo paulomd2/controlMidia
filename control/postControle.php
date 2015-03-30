@@ -36,6 +36,7 @@ switch ($opcao) {
         $idUsuario = $_SESSION['codigoAR'];
         $dataCadastro = date("Y-m-d H:i:s");
 
+        //var_dump($_FILES);
         if ($_FILES['foto']['name'] != '') {
             $foto = uploadImagem();
             if ($foto == false) {
@@ -44,6 +45,8 @@ switch ($opcao) {
         } else {
             $foto = '';
         }
+        
+        //echo $foto;
 
         $objPost->setData($data);
         $objPost->setTexto($texto);
@@ -146,7 +149,7 @@ function uploadImagem() {
     $tipoArquivo = '.' . $tipoArquivo['extension'];
 
     $new_file_name = strtolower(md5(date('d/m/Y/H:i:s'))) . $tipoArquivo;
-    if ($_FILES['imagem']['size'] > (1048576)) { //não pode ser maior que 1Mb
+    if ($_FILES['foto']['size'] > (1048576)) { //não pode ser maior que 1Mb
         $valido = false;
     } else {
         @$imagemAntiga = '../upload/' . $_POST["imagemAntiga"];
